@@ -11,12 +11,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
 
-  <body class="planoDeFundo">
+  <body class="#fafafa grey lighten-5">
     <header>
       <nav>
     <div class="nav-wrapper deep-orange">
       <div class="container">
-          <img class="responsive-img" src="/img/quake.png">       
+          <img class="responsive-img" src="/img/quake.png">
         <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       </div>
     </div>
