@@ -31,5 +31,6 @@ class ParserController extends Controller
     public function selecionar(Request $req){
       $req->all();
       $registro = $this->parserLogBusiness->analisarArquivo($req);
+      $this->parserLogBusiness->showJsonGame();
     }
 }
