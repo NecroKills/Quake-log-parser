@@ -16,7 +16,7 @@
       <nav>
     <div class="nav-wrapper deep-orange">
       <div class="container">
-          <img class="responsive-img" src="/img/quake.png">
+          <a href="#" class="brand-logo">QUAKE 3 LOG</a>
         <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       </div>
     </div>
