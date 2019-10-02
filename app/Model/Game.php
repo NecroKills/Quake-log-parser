@@ -1,7 +1,9 @@
 <?php
 
+namespace App\Model;
+
 /**
- * [GameClass description]
+ * [Game description]
  * Sera armazenado as informações que forem encontradas durante a leitura do log
  */
 class Game {
@@ -40,6 +42,10 @@ class Game {
 
   public function setKills($kills) {
       $this->kills = $kills;
+  }
+
+  public function addKill() {
+    $this->setTotal_kills($this->getTotal_kills() + 1);
   }
 
 }
