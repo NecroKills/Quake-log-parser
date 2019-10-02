@@ -17,17 +17,7 @@ class ParserLogBusiness
    private $game;
    private $kills;
    private $countGame = 0;
-
-  /**
-   * ParserLogBusiness constructor.
-   *
-   * @param Game $game
-   */
-    public function __construct(Game $game)
-    {
-        $this->game = $game;
-    }
-
+   private $jsonGame = array();
 
     /**
      * Inicia o parser no arquivo games.log, fazendo a abertuda do arquivo
@@ -73,7 +63,8 @@ class ParserLogBusiness
     }
 
     /**
-     * [lerLog description]
+     * [lerLog faz a leitura do log separando as linhas, fazendo o tratamento
+     * de cada linha dividindo a string e inserindo os valores em variaveis]
      * @param  [type] $log [description]
      * @return [type]      [description]
      */
@@ -105,12 +96,17 @@ class ParserLogBusiness
 
     }
 
+    /**
+     * [analisarLog Verifica as palavras reservadas do log, caso for encontrado
+     * inseri as informações na classe Game]
+     * @param  [type] $resp [description]
+     * @return [type]       [description]
+     */
     public function analisarLog($resp){
-
-      var_dump($resp['wordReserved']);
       //Compara as palavras reservadas do log
       switch ($resp['wordReserved']) {
           case 'InitGame':
+              $this->game = new Game();
               $this->kills = array();
               $this->countGame++;
               $this->game->setId($this->countGame);
@@ -119,12 +115,12 @@ class ParserLogBusiness
               $player = explode('\t\\', $resp['params'], 2);
               $player = explode(' n\\', $player[0], 2);
               if (!in_array($player[1], $this->game->getPlayers())) {
-                //set nome do jogador
+                //seta o nome do jogador
                 $this->game->setPlayers($player[1]);
               }
               break;
           case 'Kill':
-              //add 1 kill
+              //adiciona 1 kill
               $this->game->addKill();
 
               $result = explode(":", $resp['params'], 2);
@@ -132,7 +128,6 @@ class ParserLogBusiness
               $p_killer = trim($result[0]);
               $result = explode(" by ", trim($result[1]));
               $p_killed = trim($result[0]);
-              $mod = trim($result[1]);
 
               if ($p_killer == "<world>") {
                   //Se morreu pelo <world>, remove 1 kill.
@@ -148,15 +143,30 @@ class ParserLogBusiness
           case '------------------------------------------------------------':
           case 'ShutdownGame':
               if (isset($this->game)) {
-                //set kills
+                //Seta os kills
                 $this->game->setKills($this->kills);
+                //Seta o json game no array
+                $this->jsonGame[] = $this->game->jsonConstruct();
+                unset($this->game);
               }
               break;
           default:
               break;
       }
-
     }
 
+    /**
+     * [showJsonGame Printa na tela o Json]
+     * @return [type] [description]
+     */
+    public function showJsonGame() {
+      echo '[';
+      foreach ($this->jsonGame as $value) {
+          echo '<pre>';
+          echo $value.",";
+          echo '</pre>';
+      }
+      echo ']';
+    }
 
-}
+ }
