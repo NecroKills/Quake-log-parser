@@ -15,4 +15,4 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::post('selecionar',['as'=>'log.selecionar', 'uses'=>'ParserController@selecionar']);
+Route::post('log',['as'=>'log.selecionar', 'uses'=>'ParserController@selecionar']);
