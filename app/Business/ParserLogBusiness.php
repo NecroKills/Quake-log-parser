@@ -2,8 +2,7 @@
 
 namespace App\Business;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
+use App\Model\Game;
 
 /**
  * Class ParserLogBusiness
@@ -12,6 +11,24 @@ use Illuminate\Validation\Rule;
  */
 class ParserLogBusiness
 {
+  /**
+   * @var Game
+   */
+   private $game;
+   private $kills;
+   private $countGame = 0;
+
+  /**
+   * ParserLogBusiness constructor.
+   *
+   * @param Game $game
+   */
+    public function __construct(Game $game)
+    {
+        $this->game = $game;
+    }
+
+
     /**
      * Inicia o parser no arquivo games.log, fazendo a abertuda do arquivo
      * e chama a função lerLog.
@@ -65,9 +82,25 @@ class ParserLogBusiness
       // Percorre o arquivo e pega cada linha do log
       while (!feof($log)) {
         $row = fgets($log, 4096);
-        
+        //divide e retira o espaço da string, limitando o tamanho do array em 3
+        $value = explode(":", trim($row), 3);
+        //divide a string, limitando o tamanho do array em 2
+        $timeGame = explode(" ", $value[0], 2);
+        // Verifica se a variavel foi iniciada
+        $timeGame = isset($timeGame[1]) ? $timeGame[1] : $timeGame[0];
+        // Retira espaço da string e concatena com a variavel $value[1]
+        $timeGame = trim($timeGame . ":" . $value[1]);
+        //divide a string, limitando o tamanho do array em 2
+        $timeAndCommand = explode(" ", $timeGame, 2);
+
+        $resp['params'] = isset($value[2]) ? $value[2] : '';
+        $resp['time'] = $timeAndCommand[0];
+        $resp['wordReserved'] = $timeAndCommand[1];
+
       }
-      fclose($file);
+      // Fecha o arquivo aberto
+      fclose($log);
+
     }
 
 
