@@ -97,7 +97,7 @@ class ParserLogBusiness
         $resp['time'] = $timeAndCommand[0];
         $resp['wordReserved'] = $timeAndCommand[1];
 
-        //compare the log command
+        //Compara as palavras reservadas do log
         switch ($resp['wordReserved']) {
             case 'InitGame':
                 $this->kills = array();
@@ -108,10 +108,39 @@ class ParserLogBusiness
                 $player = explode('\t\\', $resp['params'], 2);
                 $player = explode(' n\\', $player[0], 2);
                 if (!in_array($player[1], $this->game->getPlayers())) {
-                  //set name player
+                  //set nome do jogador
                   $this->game->setPlayers($player[1]);
                 }
-                break;            
+                break;
+            case 'Kill':
+                //add 1 kill
+                $this->game->addKill();
+
+                $result = explode(":", $resp['params'], 2);
+                $result = explode("killed", $result[1]);
+                $p_killer = trim($result[0]);
+                $result = explode(" by ", trim($result[1]));
+                $p_killed = trim($result[0]);
+                $mod = trim($result[1]);
+
+                if ($p_killer == "<world>") {
+                    //Se morreu pelo <world>, remove 1 kill.
+                     $this->kills[$p_killed] = (isset($this->kills[$p_killed]) ? $this->kills[$p_killed] : 0) - 1;
+                 } else if ($p_killer == $p_killed) {
+                     //se ele se matou, remove 1 kill
+                     $this->kills[$p_killer] = (isset($this->kills[$p_killer]) ? $this->kills[$p_killer] : 0) - 1;
+                 } else {
+                     //se ele matou um oponente, adiciona 1 kill
+                     $this->kills[$p_killer] = (isset($this->kills[$p_killer]) ? $this->kills[$p_killer] : 0) + 1;
+                 }
+                break;
+            case '------------------------------------------------------------':
+            case 'ShutdownGame':
+                if (isset($this->game)) {
+                  //set kills
+                  $this->game->setKills($this->kills);
+                }
+                break;
             default:
                 break;
         }
