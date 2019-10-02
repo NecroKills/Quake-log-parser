@@ -97,6 +97,25 @@ class ParserLogBusiness
         $resp['time'] = $timeAndCommand[0];
         $resp['wordReserved'] = $timeAndCommand[1];
 
+        //compare the log command
+        switch ($resp['wordReserved']) {
+            case 'InitGame':
+                $this->kills = array();
+                $this->countGame++;
+                $this->game->setId($this->countGame);
+                break;
+            case 'ClientUserinfoChanged':
+                $player = explode('\t\\', $resp['params'], 2);
+                $player = explode(' n\\', $player[0], 2);
+                if (!in_array($player[1], $this->game->getPlayers())) {
+                  //set name player
+                  $this->game->setPlayers($player[1]);
+                }
+                break;            
+            default:
+                break;
+        }
+
       }
       // Fecha o arquivo aberto
       fclose($log);
